@@ -13,7 +13,9 @@ double res(const double R1,const double R2,const double R3);
  * @return возвращает 0, если программма выполнена корректно
  */
 int main() {
-	double R1, R2, R3 = 0;
+	double R1 = 0;
+    double R2 = 0;
+    double R3 = 0;
 	printf("enter resistence R1,R2,R3 -->\n");
 	scanf_s("%lf %lf %lf", &R1, &R2, &R3);
 	printf("Resistense is: %.2lf", res(R1, R2, R3));
