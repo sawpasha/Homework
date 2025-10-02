@@ -48,7 +48,8 @@ int main(void)
         double Y = First(X, A);
         printf("Answer is: %lf", Y);
     }
-    else if (X >= 1.2) {
+    else 
+    {
         double Y = Second(X, A);
         printf("Answer is: %lf", Y);
     }
