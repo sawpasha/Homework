@@ -31,12 +31,9 @@ double getValue();
  */
 int main(void)
 {
-    double A1 = 0;
-    double A2 = 0;
-    double A3 = 0;
-    A1 = getValue();
-    A2 = getValue();
-    A3 = getValue();
+    double A1 = getValue();
+    double A2 = getValue();
+    double A3 = getValue();
     if (A1 < 0) {
         printf("в четвертой степени:%lf\n", First(A1));
     }
@@ -55,6 +52,7 @@ int main(void)
     else {
         printf("в квадрате:%lf\n", Second(A3));
     }
+    return 0;
 }
 
 double First(const double X)
