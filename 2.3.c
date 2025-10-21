@@ -19,49 +19,42 @@ double First(const double X);
 double Second(const double X);
 
 /**
- * @brief считывает значение,
- * введенное с клавиатуры с проверкой ввода
+ * @brief Считывает значение с проверкой ввода
  * @return считанное значение
  */
 double getValue();
 
 /**
+ * @brief Вычисляет и выводит результат в зависимости от знака числа
+ * @param value число для обработки
+ */
+void printResult(const double value);
+
+/**
  * @brief Точка входа в программу
- * @return возвращает 0, если программма выполнена корректно
+ * @return возвращает 0, если программа выполнена корректно
  */
 int main(void)
 {
     double A1 = getValue();
     double A2 = getValue();
     double A3 = getValue();
-    if (A1 < 0) {
-        printf("в четвертой степени:%lf\n", First(A1));
-    }
-    else {
-        printf("в квадрате:%lf\n", Second(A1));
-    }
-    if (A2 < 0) {
-        printf("в четвертой степени:%lf\n", First(A2));
-    }
-    else {
-        printf("в квадрате:%lf\n", Second(A2));
-    }
-    if (A3 < 0) {
-        printf("в четвертой степени:%lf\n", First(A3));
-    }
-    else {
-        printf("в квадрате:%lf\n", Second(A3));
-    }
+
+    printResult(A1);
+    printResult(A2);
+    printResult(A3);
+
     return 0;
 }
 
 double First(const double X)
 {
-    return pow(X,4);
+    return pow(X, 4);
 }
+
 double Second(const double X)
 {
-    return pow(X,2);
+    return pow(X, 2);
 }
 
 double getValue()
@@ -73,4 +66,14 @@ double getValue()
         abort();
     }
     return value;
+}
+
+void printResult(const double value)
+{
+    if (value < 0) {
+        printf("в четвертой степени:%lf\n", First(value));
+    }
+    else {
+        printf("в квадрате:%lf\n", Second(value));
+    }
 }
