@@ -1,0 +1,79 @@
+#define _CRT_SECURE_NO_WARNINGS
+#define _USE_MATH_DEFINES
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+/**
+ * @brief Функция если x < 0
+ * @param X значение х которое вводит пользователь
+ * @return возвращает рассчитанное значение для отрицательного числа
+ */
+double First(const double X);
+
+/**
+ * @brief Функция если x >= 0
+ * @param X значение х которое вводит пользователь
+ * @return возвращает рассчитанное значение для положительного числа
+ */
+double Second(const double X);
+
+/**
+ * @brief Считывает значение с проверкой ввода
+ * @return считанное значение
+ */
+double getValue();
+
+/**
+ * @brief Вычисляет и выводит результат в зависимости от знака числа
+ * @param value число для обработки
+ */
+void printResult(const double value);
+
+/**
+ * @brief Точка входа в программу
+ * @return возвращает 0, если программа выполнена корректно
+ */
+int main(void)
+{
+    double A1 = getValue();
+    double A2 = getValue();
+    double A3 = getValue();
+
+    printResult(A1);
+    printResult(A2);
+    printResult(A3);
+
+    return 0;
+}
+
+double First(const double X)
+{
+    return pow(X, 4);
+}
+
+double Second(const double X)
+{
+    return pow(X, 2);
+}
+
+double getValue()
+{
+    double value = 0;
+    if (!scanf("%lf", &value))
+    {
+        printf("Error\n");
+        abort();
+    }
+    return value;
+}
+
+void printResult(const double value)
+{
+    if (value < 0) {
+        printf("в четвертой степени:%lf\n", First(value));
+    }
+    else {
+        printf("в квадрате:%lf\n", Second(value));
+    }
+}
