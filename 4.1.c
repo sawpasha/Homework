@@ -1,9 +1,20 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <locale.h>
 
-#define _CRT_SECURE_NO_WARNINGS  // Директива для отключения предупреждений безопасности в Visual Studio
-#include <stdio.h>               // Подключение стандартной библиотеки ввода-вывода
-#include <stdlib.h>              // Подключение стандартной библиотеки для работы с памятью и случайными числами
-#include <time.h>                // Подключение библиотеки для работы со временем
-#include <locale.h>              // Подключение библиотеки для установки локали
+// Константы для меню выбора
+enum {
+    MENU_RANDOM = 1,
+    MENU_KEYBOARD = 2
+};
+
+// Диапазон случайных чисел
+enum {
+    MIN_VALUE = 1,
+    MAX_VALUE = 100
+};
 
 /**
  * @brief Заполняет массив случайными числами
@@ -12,21 +23,21 @@
  * @param min минимальное значение случайного числа
  * @param max максимальное значение случайного числа
  */
-    void fillRandom(int* arr, int n, int min, int max);
+void fillRandom(int* arr, size_t n, int min, int max);
 
 /**
  * @brief Заполняет массив числами с клавиатуры
  * @param arr указатель на массив
  * @param n размер массива
  */
-void fillKeyboard(int* arr, int n);
+void fillKeyboard(int* arr, size_t n);
 
 /**
  * @brief Выводит массив на экран
  * @param arr указатель на массив
  * @param n размер массива
  */
-void printArray(int* arr, int n);
+void printArray(const int* arr, size_t n);
 
 /**
  * @brief Находит сумму элементов с нечетными индексами
@@ -34,7 +45,7 @@ void printArray(int* arr, int n);
  * @param n размер массива
  * @return сумма элементов с нечетными индексами
  */
-int sumOddIndex(int* arr, int n);
+int sumOddIndex(const int* arr, size_t n);
 
 /**
  * @brief Подсчитывает элементы больше A и кратные 5
@@ -43,164 +54,168 @@ int sumOddIndex(int* arr, int n);
  * @param A заданное число для сравнения
  * @return количество элементов, удовлетворяющих условию
  */
-int countGreaterAndMultiple(int* arr, int n, int A);
+int countGreaterAndMultiple(const int* arr, size_t n, int A);
 
 /**
  * @brief Делит элементы с четными индексами на первый элемент
- * @param arr указатель на массив
+ * @param src указатель на исходный массив
+ * @param dest указатель на массив для результатов
  * @param n размер массива
  */
-void divideEvenByFirst(int* arr, int n);
+void divideEvenByFirst(const int* src, int* dest, size_t n);
 
 /**
- * @brief Точка входа в программу
- * @return возвращает 0, если программа выполнена корректно
+ * @brief Создает копию массива
+ * @param src исходный массив
+ * @param n размер массива
+ * @return указатель на копию массива
  */
+int* copyArray(const int* src, size_t n);
+
 int main(void)
 {
-    setlocale(LC_ALL, "Russian");  // Установка русской локали для корректного отображения кириллицы
-    srand(time(NULL));             // Инициализация генератора случайных чисел текущим временем
-    int n = 0, choice = 0, A = 0;  // Объявление переменных для размера массива, выбора пользователя и числа A
-    int* arr = NULL;               // Объявление указателя на массив и инициализация значением NULL
+    setlocale(LC_ALL, "Russian");
+    srand((unsigned int)time(NULL));
 
-    printf("Введите размер массива: ");  // Вывод приглашения для ввода размера массива
-    scanf("%d", &n);                     // Считывание размера массива с клавиатуры
+    // Ввод размера массива
+    size_t n = 0;
+    printf("Введите размер массива: ");
+    scanf("%zu", &n);
 
-    if (n <= 0) {                        // Проверка корректности введенного размера массива
-        printf("Ошибка: размер массива должен быть положительным\n");  // Вывод сообщения об ошибке
-        return 1;                        // Завершение программы с кодом ошибки
+    if (n == 0) {
+        printf("Ошибка: размер массива должен быть положительным\n");
+        return 1;
     }
 
-    arr = (int*)malloc(n * sizeof(int));  // Выделение динамической памяти для массива
-    if (arr == NULL) {                    // Проверка успешности выделения памяти
-        printf("Ошибка выделения памяти\n");  // Вывод сообщения об ошибке
-        return 1;                        // Завершение программы с кодом ошибки
+    // Выделение памяти
+    int* arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        printf("Ошибка выделения памяти\n");
+        return 1;
     }
 
-    printf("\nВыберите способ заполнения массива:\n");  // Вывод меню выбора способа заполнения
-    printf("1 - Случайные числа\n");                    // Вывод первого варианта
-    printf("2 - Ввод с клавиатуры\n");                  // Вывод второго варианта
-    printf("Ваш выбор: ");                              // Приглашение для выбора
-    scanf("%d", &choice);                               // Считывание выбора пользователя
+    // Выбор способа заполнения
+    int choice = 0;
+    printf("\nВыберите способ заполнения массива:\n");
+    printf("%d - Случайные числа\n", MENU_RANDOM);
+    printf("%d - Ввод с клавиатуры\n", MENU_KEYBOARD);
+    printf("Ваш выбор: ");
+    scanf("%d", &choice);
 
-    switch (choice) {                    // Оператор выбора в зависимости от введенного значения
-    case 1:                          // Если выбран вариант 1
-        fillRandom(arr, n, 1, 100);  // Вызов функции заполнения массива случайными числами
-        break;                       // Выход из оператора switch
-    case 2:                          // Если выбран вариант 2
-        fillKeyboard(arr, n);        // Вызов функции заполнения массива с клавиатуры
-        break;                       // Выход из оператора switch
-    default:                         // Если введено любое другое значение
-        printf("Неверный выбор. Используются случайные числа.\n");  // Сообщение о неверном выборе
-        fillRandom(arr, n, 1, 100);  // Заполнение массива случайными числами по умолчанию
+    switch (choice) {
+    case MENU_RANDOM:
+        fillRandom(arr, n, MIN_VALUE, MAX_VALUE);
+        break;
+    case MENU_KEYBOARD:
+        fillKeyboard(arr, n);
+        break;
+    default:
+        printf("Неверный выбор. Используются случайные числа.\n");
+        fillRandom(arr, n, MIN_VALUE, MAX_VALUE);
     }
 
-    printf("\nИсходный массив:\n");      // Вывод заголовка перед выводом массива
-    printArray(arr, n);                  // Вызов функции для вывода массива на экран
+    // Вывод исходного массива
+    printf("\nИсходный массив:\n");
+    printArray(arr, n);
 
-    printf("\n1. Сумма элементов с нечетными индексами: %d\n", sumOddIndex(arr, n));  // Вывод результата первого задания
+    // Задание 1
+    printf("\n1. Сумма элементов с нечетными индексами: %d\n", 
+           sumOddIndex(arr, n));
 
-    printf("\nВведите число A для сравнения: ");  // Приглашение для ввода числа A
-    scanf("%d", &A);                              // Считывание числа A с клавиатуры
-    printf("2. Количество элементов > %d и кратных 5: %d\n", A, countGreaterAndMultiple(arr, n, A));  // Вывод результата второго задания
+    // Задание 2
+    int A = 0;
+    printf("\nВведите число A для сравнения: ");
+    scanf("%d", &A);
+    printf("2. Количество элементов > %d и кратных 5: %d\n", A, 
+           countGreaterAndMultiple(arr, n, A));
 
-    printf("\n3. Деление элементов с четными индексами на первый элемент:\n");  // Вывод заголовка третьего задания
-    if (arr[0] != 0) {                    // Проверка, что первый элемент не равен нулю
-        divideEvenByFirst(arr, n);        // Вызов функции для деления элементов
-        printf("Массив после преобразования:\n");  // Вывод заголовка
-        printArray(arr, n);               // Вывод преобразованного массива
-    }
-    else {                              // Если первый элемент равен нулю
-        printf("Ошибка: первый элемент равен 0, деление невозможно\n");  // Вывод сообщения об ошибке
-    }
-
-    free(arr);                            // Освобождение динамически выделенной памяти
-    return 0;                             // Завершение программы с кодом успеха
-}
-
-/**
- * @brief Заполняет массив случайными числами
- * @param arr указатель на массив
- * @param n размер массива
- * @param min минимальное значение случайного числа
- * @param max максимальное значение случайного числа
- */
-void fillRandom(int* arr, int n, int min, int max)
-{
-    for (int i = 0; i < n; i++) {        // Цикл по всем элементам массива
-        arr[i] = rand() % (max - min + 1) + min;  // Присвоение текущему элементу случайного значения в заданном диапазоне
-    }
-}
-
-/**
- * @brief Заполняет массив числами с клавиатуры
- * @param arr указатель на массив
- * @param n размер массива
- */
-void fillKeyboard(int* arr, int n)
-{
-    printf("Введите %d элементов массива:\n", n);  // Вывод приглашения для ввода элементов
-    for (int i = 0; i < n; i++) {        // Цикл по всем элементам массива
-        printf("arr[%d] = ", i);         // Вывод номера текущего элемента
-        scanf("%d", &arr[i]);            // Считывание значения элемента с клавиатуры
-    }
-}
-
-/**
- * @brief Выводит массив на экран
- * @param arr указатель на массив
- * @param n размер массива
- */
-void printArray(int* arr, int n)
-{
-    for (int i = 0; i < n; i++) {        // Цикл по всем элементам массива
-        printf("%d ", arr[i]);            // Вывод текущего элемента массива
-    }
-    printf("\n");                         // Переход на новую строку после вывода всех элементов
-}
-
-/**
- * @brief Находит сумму элементов с нечетными индексами
- * @param arr указатель на массив
- * @param n размер массива
- * @return сумма элементов с нечетными индексами
- */
-int sumOddIndex(int* arr, int n)
-{
-    int sum = 0;                          // Инициализация переменной для хранения суммы
-    for (int i = 1; i < n; i += 2) {      // Цикл по нечетным индексам (начиная с 1 с шагом 2)
-        sum += arr[i];                    // Добавление значения элемента к сумме
-    }
-    return sum;                           // Возврат вычисленной суммы
-}
-
-/**
- * @brief Подсчитывает элементы больше A и кратные 5
- * @param arr указатель на массив
- * @param n размер массива
- * @param A заданное число для сравнения
- * @return количество элементов, удовлетворяющих условию
- */
-int countGreaterAndMultiple(int* arr, int n, int A)
-{
-    int count = 0;                        // Инициализация счетчика
-    for (int i = 0; i < n; i++) {         // Цикл по всем элементам массива
-        if (arr[i] > A && arr[i] % 5 == 0) {  // Проверка условий: элемент больше A и кратен 5
-            count++;                      // Увеличение счетчика при выполнении условий
+    // Задание 3
+    printf("\n3. Деление элементов с четными индексами на первый элемент:\n");
+    if (arr[0] != 0) {
+        // Создаем копию массива для преобразований
+        int* tempArr = copyArray(arr, n);
+        if (tempArr != NULL) {
+            divideEvenByFirst(arr, tempArr, n);
+            printf("Массив после преобразования:\n");
+            printArray(tempArr, n);
+            free(tempArr);
+        }
+        else {
+            printf("Ошибка выделения памяти для копии массива\n");
         }
     }
-    return count;                         // Возврат количества найденных элементов
+    else {
+        printf("Ошибка: первый элемент равен 0, деление невозможно\n");
+    }
+
+    free(arr);
+    return 0;
 }
 
-/**
- * @brief Делит элементы с четными индексами на первый элемент
- * @param arr указатель на массив
- * @param n размер массива
- */
-void divideEvenByFirst(int* arr, int n)
+void fillRandom(int* arr, size_t n, int min, int max)
 {
-    int first = arr[0];                   // Сохранение значения первого элемента
-    for (int i = 0; i < n; i += 2) {      // Цикл по четным индексам (начиная с 0 с шагом 2)
-        arr[i] /= first;                  // Деление текущего элемента на первый элемент
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = rand() % (max - min + 1) + min;
     }
+}
+
+void fillKeyboard(int* arr, size_t n)
+{
+    printf("Введите %zu элементов массива:\n", n);
+    for (size_t i = 0; i < n; i++) {
+        printf("arr[%zu] = ", i);
+        scanf("%d", &arr[i]);
+    }
+}
+
+void printArray(const int* arr, size_t n)
+{
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int sumOddIndex(const int* arr, size_t n)
+{
+    int sum = 0;
+    for (size_t i = 1; i < n; i += 2) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int countGreaterAndMultiple(const int* arr, size_t n, int A)
+{
+    int count = 0;
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] > A && arr[i] % 5 == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void divideEvenByFirst(const int* src, int* dest, size_t n)
+{
+    int first = src[0];
+    for (size_t i = 0; i < n; i++) {
+        if (i % 2 == 0) {
+            dest[i] = src[i] / first;
+        }
+        else {
+            dest[i] = src[i]; // Нечетные индексы остаются без изменений
+        }
+    }
+}
+
+int* copyArray(const int* src, size_t n)
+{
+    int* dest = (int*)malloc(n * sizeof(int));
+    if (dest != NULL) {
+        for (size_t i = 0; i < n; i++) {
+            dest[i] = src[i];
+        }
+    }
+    return dest;
 }
