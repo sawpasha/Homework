@@ -35,7 +35,7 @@ void checkValueForN(const int input);
  * @param min минимальное значение случайного числа
  * @param max максимальное значение случайного числа
  */
-void fillRandom(int* arr, size_t n, int min, int max);
+void fillRandom(int* arr, size_t n, const int min, const int max);
 
 /**
  * @brief Заполняет массив числами с клавиатуры
@@ -180,7 +180,7 @@ void checkValueForN(const int input)
     }
 }
 
-void fillRandom(int* arr, size_t n, int min, int max)
+void fillRandom(int* arr, size_t n, const int min, const int max)
 {
     for (size_t i = 0; i < n; i++) {
         arr[i] = rand() % (max - min + 1) + min;
