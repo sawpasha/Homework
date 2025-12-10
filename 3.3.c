@@ -1,7 +1,7 @@
-#include<stdio.h>
-#include<math.h>
-#include<stdlib.h>
-#include<float.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <float.h>
 
 /**
 * @brief Рассчитывает значение функции в точке
@@ -52,7 +52,7 @@ void checkEndStart(const double start, const double end);
 void checkStep(const double step);
 
 /**
-* @brief Проверяет заначение на условие
+* @brief Проверяет значение x на принадлежность области определения функции
 * @param x - значение параметра x
 * @return Возвращает 0 или 1 в зависимости от истинности выражения
 */
@@ -64,101 +64,104 @@ _Bool checkOOP(const double x);
 */
 int main(void)
 {
-	system("chcp 1251");
+    system("chcp 1251");
 
-	printf("Введите число e: ");
-	double e = getValid();
-	checkValueForN(e);
+    printf("Введите число e: ");
+    double e = getValid();
+    checkValueForN(e);
 
-	printf("Введите начальное значение: ");
-	double start = getValid();
-	printf("Введите конечное значение: ");
-	double end = getValid();
-	checkEndStart(start, end);
+    printf("Введите начальное значение: ");
+    double start = getValid();
+    printf("Введите конечное значение: ");
+    double end = getValid();
+    checkEndStart(start, end);
 
-	printf("Введите шаг: ");
-	double step = getValid();
-	checkStep(step);
+    printf("Введите шаг: ");
+    double step = getValid();
+    checkStep(step);
 
-	printf("%-10s%-25s%-10s\n", "x", "f(x)", "Summ(x)");
-	for (double x = start; x < end + step; x += step)
-	{
-		if (checkOOP(x))
-		{
-			printf_s("%-10.2lf%-25.4lf%-10.4lf\n", x, defFunct(x), defSummE(e, x));
-		}
-		else
-		{
-			printf_s("%-10.2lf%-25s%-10s\n", x, "Функция не определена", "Сумма ряда не определена");
-		}
+    printf("x   f(x)   Summ(x)\n");
 
-	}
+    for (double x = start; x < end + step; x += step)
+    {
+        if (checkOOP(x))
+        {
+            printf_s("x = %.2lf, f(x) = %.4lf, S(x) = %.4lf\n",
+                     x, defFunct(x), defSummE(e, x));
+        }
+        else
+        {
+            printf_s("Функция не определена\n");
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 const double defFunct(const double x)
 {
-	return exp(x);
+    return exp(x);
 }
 
 double getValid()
 {
-	double valid = 0;
-	if (!scanf_s("%lf", &valid))
-	{
-		printf("Error\n");
-		exit(1);
-	}
+    double valid = 0;
+    if (!scanf_s("%lf", &valid))
+    {
+        printf("Error\n");
+        exit(1);
+    }
 
-	return valid;
+    return valid;
 }
 
 void checkValueForN(const double input)
 {
-	if (!(input > DBL_EPSILON))
-	{
-		printf("Error\n");
-		exit(1);
-	}
+    if (!(input > DBL_EPSILON))
+    {
+        printf("Error\n");
+        exit(1);
+    }
 }
 
 double defSummE(const double e, const double x)
 {
-	double current = 1.0;
-	double result = 0;
-	for (int i = 0; fabs(current) > e; i++)
-	{
-		result += current;
-		current *= getRecurent(i, x);
-	}
-	return result;
+    double current = 1.0;
+    double result = current;
+
+    for (int i = 1; fabs(current) > e; i++)
+    {
+        current *= getRecurent(i, x);
+        result += current;
+    }
+
+    return result;
 }
 
 void checkEndStart(const double start, const double end)
 {
-	if (!(start < end))
-	{
-		printf("Error\n Значения не должны совпадать\n Значение начала не может быть больше значения конца\n");
-		exit(1);
-	}
+    if (!(start < end))
+    {
+        printf("Error\n Значения не должны совпадать\n Значение начала не может быть больше значения конца\n");
+        exit(1);
+    }
 }
 
 void checkStep(const double step)
 {
-	if (step <= DBL_EPSILON)
-	{
-		printf("Error\n Шаг должен быть больше 0\n");
-		exit(1);
-	}
+    if (step <= DBL_EPSILON)
+    {
+        printf("Error\n Шаг должен быть больше 0\n");
+        exit(1);
+    }
 }
 
 double getRecurent(const int i, const double x)
 {
-	return x / (i + 1);
+    return x / i;
 }
 
 _Bool checkOOP(const double x)
 {
-	return 1;
+    return isfinite(x);
 }
