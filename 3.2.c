@@ -73,7 +73,7 @@ double getValid()
 
 void checkValueForN(const double input)
 {
-	if (!(input > 0))
+	if (!(input > DBL_EPSILON))
 	{
 		printf("Error\n");
 		exit(1);
