@@ -11,7 +11,7 @@
 double defSumm(const int n);
 
 /**
-* @brief Рассчитывает рекурентной фоормулы с заданной точностью e
+* @brief Рассчитывает сумму по рекуррентной формуле с заданной точностью e
 * @param e - точность рассчёта
 * @return Рассчитанное значение
 */
@@ -95,11 +95,11 @@ double defSumm(const int n)
 double defSummE(const double e)
 {
 	double current = 1.0;
-	double result = 0;
+	double result = current; // Исправлено: сумма начинается с первого элемента
 	for (int i = 0; fabs(current) >= e; i++)
 	{
-		result += current;
 		current *= getRecurent(i);
+		result += current;
 	}
 	return result;
 }
